@@ -1,0 +1,149 @@
+import {
+  StudentProfileFullData,
+  RadarMasteryItem,
+  AnalyticsFilter,
+} from './types.ts';
+import { StudentState, SkillLevel } from '../types.ts';
+import { StudentAccount, TopicWithMeta } from '../services/types.ts';
+import { calculateLevelMastery, calculateAllMastery, SKILL_METADATA } from '../logic/mastery.ts';
+import { QUESTIONS_BANK } from '../data/mockData.ts';
+
+const ONE_WEEK = 7 * 86400000;
+
+export function computeStudentProfileData(
+  studentId: string,
+  allStates: Record<string, StudentState>,
+  allStudents: StudentAccount[],
+  topics: TopicWithMeta[],
+  filter?: AnalyticsFilter
+): StudentProfileFullData | null {
+  const account = allStudents.find((s) => s.id === studentId);
+  const state = allStates[studentId];
+  if (!account || !state) return null;
+
+  const className = account.class_id === 'class_7a2' ? '7A2' : '7A3';
+  const classStudents = allStudents.filter((s) => s.class_id === account.class_id);
+
+  // Tính xếp hạng trong lớp
+  let rank = 1;
+  const myTotalXp = state.totalXp || 0;
+  classStudents.forEach((cs) => {
+    const csState = allStates[cs.id];
+    if (csState && (csState.totalXp || 0) > myTotalXp) {
+      rank++;
+    }
+  });
+
+  // Radar 4 mức so với lớp
+  const levels: SkillLevel[] = ['NHAN_BIET', 'THONG_HIEU', 'PHAN_TICH', 'VAN_DUNG'];
+  const myResults = state.questionResults || [];
+
+  const radarScores: RadarMasteryItem[] = levels.map((lvl) => {
+    const myMastery = calculateLevelMastery(myResults, lvl);
+    const meta = SKILL_METADATA[lvl];
+
+    // Tính trung bình lớp
+    let classSum = 0;
+    let classCount = 0;
+    classStudents.forEach((cs) => {
+      const cst = allStates[cs.id];
+      if (cst) {
+        const cm = calculateLevelMastery(cst.questionResults || [], lvl);
+        classSum += cm.percentage;
+        classCount++;
+      }
+    });
+
+    const classAverage = classCount === 0 ? 70 : Math.round(classSum / classCount);
+
+    return {
+      level: lvl,
+      levelName: meta.displayName,
+      classAverage,
+      targetGoal: 80,
+      selectedStudentScore: myMastery.percentage,
+    };
+  });
+
+  // Tiến độ từng chủ đề
+  const topicMasteryList = topics.map((top) => {
+    const topResults = myResults.filter((r) => r.topicId === top.id);
+    const m = calculateAllMastery(topResults, top.id);
+    const avgP = Math.round((m.NHAN_BIET.percentage + m.THONG_HIEU.percentage + m.PHAN_TICH.percentage + m.VAN_DUNG.percentage) / 4);
+
+    let status = m.PHAN_TICH.status;
+    if (topResults.length < 3) status = 'INSUFFICIENT_DATA';
+    else if (avgP >= 78) status = 'SOLID';
+    else if (avgP >= 58) status = 'PROGRESSING';
+    else status = 'NEEDS_REVIEW';
+
+    const completedStepCount = (state.completedSteps || []).filter((s) => s.includes(top.id)).length;
+
+    return {
+      topicId: top.id,
+      topicTitle: top.title,
+      status,
+      percentage: avgP,
+      completedStepCount,
+    };
+  });
+
+  // Lịch sử bài làm chi tiết
+  const attemptHistory = myResults
+    .slice(-15)
+    .reverse()
+    .map((r, i) => {
+      const qDef = QUESTIONS_BANK[r.questionId];
+      const top = topics.find((t) => t.id === r.topicId);
+      const isPass = r.scoreRatio >= 0.5;
+
+      return {
+        id: `att_${r.questionId}_${i}`,
+        timestamp: r.timestamp,
+        quizTitle: `Kiểm tra năng lực: ${top?.title || 'Ngữ văn 7'}`,
+        topicTitle: top?.title || 'Chủ đề',
+        score: Math.round(r.scoreRatio * 10 * 10) / 10,
+        maxScore: 10,
+        isPass,
+        level: r.level,
+        questionPrompt: qDef?.prompt || 'Câu hỏi luyện tập',
+        selectedAnswer: isPass ? (Array.isArray(qDef?.answer) ? qDef?.answer[0] : qDef?.answer) : 'Lựa chọn chưa chính xác',
+        correctAnswer: Array.isArray(qDef?.answer) ? qDef?.answer.join(', ') : qDef?.answer,
+      };
+    });
+
+  // Thời gian học theo 6 tuần
+  const now = Date.now();
+  const weeklyActivity: { weekLabel: string; activeMinutes: number; daysAttended: number }[] = [];
+
+  for (let w = 5; w >= 0; w--) {
+    const wStart = now - (w + 1) * ONE_WEEK;
+    const wEnd = now - w * ONE_WEEK;
+
+    const daysAttended = (state.attendanceHistory || []).filter((d) => {
+      const t = new Date(d).getTime();
+      return t >= wStart && t < wEnd;
+    }).length;
+
+    const activeMinutes = daysAttended * 32;
+
+    weeklyActivity.push({
+      weekLabel: `Tuần ${6 - w}`,
+      activeMinutes,
+      daysAttended,
+    });
+  }
+
+  return {
+    account,
+    state,
+    className,
+    rankInClass: rank,
+    totalStudentsInClass: classStudents.length,
+    radarScores,
+    topicMasteryList,
+    attemptHistory,
+    weeklyActivity,
+    teacherNote: (state as any).teacherNotes || 'Chưa có ghi chú riêng từ giáo viên.',
+  };
+}

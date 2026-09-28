@@ -1,0 +1,267 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Plus Jakarta Sans", "Be Vietnam Pro", sans-serif;
+  --font-sans: "Plus Jakarta Sans", "Be Vietnam Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-lora: "Lora", Georgia, serif;
+
+  --color-primary-indigo: #4F46E5;
+  --color-purple-electric: #8B5CF6;
+  --color-cyan-vibrant: #22D3EE;
+  --color-yellow-sun: #FBBF24;
+  --color-bg-light: #F8FAFF;
+  --color-text-main: #1E1B4B;
+  --color-text-sub: #64748B;
+  --color-success-green: #10B981;
+  --color-error-red: #EF4444;
+
+  --color-paper-bg: #FAF5EB;
+  --color-paper-card: #FFFDF8;
+  --color-ink-blue: #2F3E6B;
+  --color-terracotta: #E2704A;
+  --color-sage: #7FA88A;
+  --color-honey: #F2B84B;
+  --color-peach: #F4A3A3;
+  --color-paper-border: #E6DCC8;
+}
+
+/* Paper & Ink Utility Classes */
+.font-lora {
+  font-family: var(--font-lora);
+}
+
+.paper-bg {
+  background-color: #FAF5EB;
+}
+
+.paper-card {
+  background-color: #FFFDF8;
+  border: 1px solid #E6DCC8;
+}
+
+.paper-card-subtle {
+  background-color: #F7F1E5;
+  border: 1px solid #E6DCC8;
+}
+
+/* Print Layout for Student Credentials */
+@media print {
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+  }
+  .no-print, header, nav, aside, .dev-panel-container {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .print-page-break {
+    page-break-after: always;
+  }
+  .voucher-card {
+    border: 1.5px dashed #4B5563 !important;
+    page-break-inside: avoid;
+    margin-bottom: 12px !important;
+    background: #FFFFFF !important;
+  }
+}
+
+:root {
+  --bg-page: #F8FAFF;
+  --bg-card: #FFFFFF;
+  --text-main: #1E1B4B;
+  --text-muted: #64748B;
+  --color-primary: #4F46E5;
+  --color-secondary: #8B5CF6;
+  --color-accent-cyan: #22D3EE;
+  --color-accent-yellow: #FBBF24;
+  --color-success: #10B981;
+  --color-error: #EF4444;
+  --border-light: #EEF2F6;
+  --border-focus: #C7D2FE;
+}
+
+/* Responsive / User-selected Font Scaling */
+html {
+  font-size: 16px;
+  transition: font-size 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html[data-font-size="normal"] {
+  font-size: 16px !important;
+}
+
+html[data-font-size="large"] {
+  font-size: 18px !important;
+}
+
+html[data-font-size="larger"] {
+  font-size: 20px !important;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #F8FAFF;
+  color: #1E1B4B;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Modern Creative EdTech Dot-Grid Background */
+.edtech-dot-bg {
+  background-color: #F8FAFF;
+  background-image: radial-gradient(#CBD5E1 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Theme: Mầm Văn Nature Brand */
+[data-theme="mam_van_nature"] {
+  --bg-page: #FAF8F5;
+  --bg-card: #FFFFFF;
+  --text-main: #1E2C24;
+  --text-muted: #52796F;
+  --color-primary: #2F6B4F;
+  --color-secondary: #7AA874;
+  --color-accent-yellow: #C89B3C;
+  --border-light: #E8D8BE;
+}
+
+[data-theme="mam_van_nature"] .gradient-primary {
+  background: linear-gradient(135deg, #2F6B4F 0%, #3D8B6D 100%);
+}
+
+[data-theme="mam_van_nature"] .edtech-dot-bg {
+  background-color: #FAF8F5;
+  background-image: radial-gradient(#D9CBB3 1px, transparent 1px);
+}
+
+/* Modern Elevated Cards */
+.edtech-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 4px 20px -2px rgba(79, 70, 229, 0.05), 0 2px 6px -1px rgba(30, 27, 75, 0.02);
+}
+
+.edtech-card-hover {
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.22s ease;
+}
+
+.edtech-card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 32px -8px rgba(79, 70, 229, 0.12), 0 4px 12px -2px rgba(139, 92, 246, 0.08);
+  border-color: #C7D2FE;
+}
+
+/* Gradients */
+.gradient-primary {
+  background: linear-gradient(135deg, #4F46E5 0%, #8B5CF6 100%);
+}
+
+.gradient-creative {
+  background: linear-gradient(135deg, #22D3EE 0%, #8B5CF6 100%);
+}
+
+.gradient-reward {
+  background: linear-gradient(135deg, #FBBF24 0%, #F97316 100%);
+}
+
+.gradient-success {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+}
+
+.gradient-soft-indigo {
+  background: linear-gradient(180deg, #FFFFFF 0%, #F5F3FF 100%);
+}
+
+/* Glassmorphism subtle overlays */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.glass-panel-dark {
+  background: rgba(30, 27, 75, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* Smooth custom scrollbars */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F8FAFF;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* Mầm Mực Mascot Animations */
+@keyframes mamMucSproutSway {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(-3.8deg) scaleY(1.02);
+  }
+  75% {
+    transform: rotate(3.8deg) scaleY(0.98);
+  }
+}
+
+@keyframes mamMucBlink {
+  0%, 92%, 100% {
+    transform: scaleY(1);
+  }
+  94%, 96% {
+    transform: scaleY(0.08);
+  }
+  98% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes mamMucGentleFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.mam-muc-sprout-idle {
+  transform-origin: 56px 26px;
+  animation: mamMucSproutSway 3.8s ease-in-out infinite;
+}
+
+.mam-muc-eyes-blink {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mamMucBlink 4.2s ease-in-out infinite;
+}
+
+.mam-muc-idle-float {
+  animation: mamMucGentleFloat 3.5s ease-in-out infinite;
+}
+
+/* Tôn trọng prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .mam-muc-sprout-idle,
+  .mam-muc-eyes-blink,
+  .mam-muc-idle-float,
+  .edtech-card-hover:hover {
+    animation: none !important;
+    transform: none !important;
+  }
+}

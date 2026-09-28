@@ -1,0 +1,6 @@
+{
+  "name": "Vở Mực - Ngữ văn lớp 7",
+  "description": "Nền tảng học lại bài giảng, rèn luyện năng lực Ngữ văn lớp 7 theo phong cách Giấy & Mực cùng bạn đồng hành Mầm Mực.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
